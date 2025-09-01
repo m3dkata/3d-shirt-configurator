@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <meta http-equiv="Cache-Control" content="max-age=31536000, public">
+    <link rel="manifest" href="manifest.json">
+    <!-- iOS Status Bar Color -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Android Theme Color (status bar and address bar) -->
+    <meta name="theme-color" content="rgb(20, 40, 81)">
+    
+    <!-- Match the background color of your app -->
+    <meta name="msapplication-navbutton-color" content="rgb(20, 40, 81)">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="prefetch" href="models/men1.glb" as="fetch" crossorigin>
+    <link rel="prefetch" href="models/men2.glb" as="fetch" crossorigin>
+    <link rel="prefetch" href="models/men3.glb" as="fetch" crossorigin>
+    <link rel="prefetch" href="models/women1.glb" as="fetch" crossorigin>
+    <link rel="prefetch" href="models/women2.glb" as="fetch" crossorigin>
+    <!-- <link rel="preload" href="textures/1.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/2.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/3.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/4.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/5.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/6.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/7.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/8.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/9.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/10.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/11.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/12.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/13.jpg" as="image" type="image/webp" crossorigin>
+    <link rel="preload" href="textures/14.jpg" as="image" type="image/webp" crossorigin> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/solid.min.css" rel="stylesheet">
+    <title>3D РИЗА</title>   
+    <!-- <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.157.0/examples/jsm/"
+            }
+        }
+    </script>     -->
+    <!-- Load Three.js core library -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/DRACOLoader.js"></script>    
+    <!-- Load Three.js addons with correct paths -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+        }
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js"></script>
+<script src="
+https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js
+"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+
+</head>
+<body>
+    <div id="main-container">
+        <a id="logo" href="https://(server-domain)/shop/" rel="noopener">
+            <span class="logo-text">КЪМ <br>МАГАЗИНА</span>
+        </a>
+        <div id="viewer-container">
+            <div id="tryon-container">
+              <button id="tryon-btn"><i class="fa-solid fa-camera"></i> Пробвай</button>
+              <input type="file" id="tryon-photo-input" accept="image/*" style="display:none;">
+            </div>
+            <div id="tryon-modal" style="display:none;">
+              <div id="tryon-modal-content">
+                <span id="tryon-close">&times;</span>
+                <canvas id="tryon-canvas"></canvas>
+              </div>
+            </div>
+
+            <div class="model-buttons"></div>          
+            <div class="control-buttons">
+                <button class="control-btn" id="home"><i class="fa-solid fa-house"></i></button>
+                <button class="control-btn" id="rotate"><i class="fa-solid fa-rotate-left"></i></button>
+                <button class="control-btn" id="zoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                <button class="control-btn" id="zoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                <button class="control-btn" id="moveUp"><i class="fa-solid fa-circle-chevron-up"></i></button>
+                <button class="control-btn" id="moveDown"><i class="fa-solid fa-circle-chevron-down"></i></button>
+            </div>
+            <div id="loading-screen">
+                <div class="loader-container">
+                    <div class="win11-spinner"></div>
+                    <div id="loader-percentage" class="loader-percentage">0%</div>
+                </div>
+            </div>
+            <canvas id="canvas"></canvas>
+            <div class="cart-controls">
+                <div id="quantity-selector-container" class="quantity-selector">
+                    <label for="shirt-quantity">Бр.</label>
+                    <div class="quantity-controls">
+                        <button type="button" class="quantity-btn minus">-</button>
+                        <input type="number" id="shirt-quantity" name="quantity" min="1" value="1">
+                        <button type="button" class="quantity-btn plus">+</button>
+                    </div>
+                </div>
+                <button id="add-to-cart-btn">
+                    Купи <i class="fa-solid fa-cart-plus"></i>
+                </button>
+                <a id="view-cart-btn" href="https://(server-domain)/kolichka/">
+                    Към <i class="fa-solid fa-cart-shopping"></i>
+                </a>
+            </div>
+            <!-- Add this right after your existing control-buttons div -->
+            <div class="button-color-controls">
+                <div class="button-colors" style="display: flex; flex-wrap: wrap; gap: 5px;">
+                    <!-- White Button -->
+                    <button class="btn-color active" data-color="0xffffff" style="width: 25px; height: 25px;  border-radius: 30px; cursor: pointer; background: transparent; padding: 0;" title="White">
+                        <svg width="21" height="21" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12.5" cy="12.5" r="10" fill="#ffffff" stroke="" stroke-width="1"/>
+                            <circle cx="9" cy="9" r="1.8" fill=""/>
+                            <circle cx="16" cy="9" r="1.8" fill=""/>
+                            <circle cx="9" cy="16" r="1.8" fill=""/>
+                            <circle cx="16" cy="16" r="1.8" fill=""/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Black Button -->
+                    <button class="btn-color" data-color="0x000000" style="width: 25px; height: 25px;  border-radius: 30px; cursor: pointer; background: transparent; padding: 0;" title="Black">
+                        <svg width="21" height="21" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12.5" cy="12.5" r="10" fill="black" stroke="" stroke-width="1"/>
+                            <circle cx="9" cy="9" r="1.8" fill="#ccc"/>
+                            <circle cx="16" cy="9" r="1.8" fill="#ccc"/>
+                            <circle cx="9" cy="16" r="1.8" fill="#ccc"/>
+                            <circle cx="16" cy="16" r="1.8" fill="#ccc"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Navy Button -->
+                    <button class="btn-color" data-color="0x1a237e" style="width: 25px; height: 25px;  border-radius: 30px; cursor: pointer; background: transparent; padding: 0;" title="Navy">
+                        <svg width="21" height="21" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12.5" cy="12.5" r="10" fill="#1a237e" stroke="" stroke-width="1"/>
+                            <circle cx="9" cy="9" r="1.8" fill="#ccc"/>
+                            <circle cx="16" cy="9" r="1.8" fill="#ccc"/>
+                            <circle cx="9" cy="16" r="1.8" fill="#ccc"/>
+                            <circle cx="16" cy="16" r="1.8" fill="#ccc"/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Brown Button -->
+                    <button class="btn-color" data-color="0x8d6e63" style="width: 25px; height: 25px;  border-radius: 30px; cursor: pointer; background: transparent; padding: 0;" title="Brown">
+                        <svg width="21" height="21" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12.5" cy="12.5" r="10" fill="#8d6e63" stroke="" stroke-width="1"/>
+                            <circle cx="9" cy="9" r="1.8" fill=""/>
+                            <circle cx="16" cy="9" r="1.8" fill=""/>
+                            <circle cx="9" cy="16" r="1.8" fill=""/>
+                            <circle cx="16" cy="16" r="1.8" fill=""/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Gold Button -->
+                    <button class="btn-color" data-color="0xe33232" style="width: 25px; height: 25px;  border-radius: 30px; cursor: pointer; background: transparent; padding: 0;" title="Gold">
+                        <svg width="21" height="21" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12.5" cy="12.5" r="10" fill="#e33232" stroke="" stroke-width="1"/>
+                            <circle cx="9" cy="9" r="1.8" fill=""/>
+                            <circle cx="16" cy="9" r="1.8" fill=""/>
+                            <circle cx="9" cy="16" r="1.8" fill=""/>
+                            <circle cx="16" cy="16" r="1.8" fill=""/>
+                        </svg>
+                    </button>
+                    
+                    <!-- Silver Button -->
+                    <button class="btn-color" data-color="0xc0c0c0" style="width: 25px; height: 25px;  border-radius: 30px; cursor: pointer; background: transparent; padding: 0;" title="Silver">
+                        <svg width="21" height="21" viewBox="0 0 25 25" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12.5" cy="12.5" r="10" fill="#c0c0c0" stroke="" stroke-width="1"/>
+                            <circle cx="9" cy="9" r="1.8" fill=""/>
+                            <circle cx="16" cy="9" r="1.8" fill=""/>
+                            <circle cx="9" cy="16" r="1.8" fill=""/>
+                            <circle cx="16" cy="16" r="1.8" fill=""/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add this to your index.html near the other controls -->
+            <!-- Add these inside your viewer-container div -->
+            <div id="shirt-size-container" class="size-selector">
+                <label for="shirt-size">Размер</label>
+                <select id="shirt-size">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+
+            <div id="price-display-container" class="price-display">
+                <span class="price-label">Цена: </span>
+                <span id="price-display" class="price-value">119.00 лв.</span>
+            </div>
+            <div id="message-container"></div>
+
+        </div>
+        <div id="texture-sidebar">
+            <div id="texture-filters">
+                <select id="material-filter">
+                    <option value="">Съдържание</option>
+                    <option value="96% памук 4% еластан">96% памук 4% еластан</option>
+                </select>
+                <select id="color-filter">
+                    <option value="">Цвят</option>
+                    <option value="СИН">СИН</option>
+                    <option value="СИВ">СИВ</option>
+                    <option value="ЗЕЛЕН/СИН/ЛИЛАВ">ЗЕЛЕН/СИН/ЛИЛАВ</option>
+                    <option value="ТЮРКОАЗ">ТЮРКОАЗ</option>
+                    <option value="БЯЛ">БЯЛ</option>
+                    <option value="КАРО">КАРО</option>
+                </select>
+                <select id="style-filter">
+                    <option value="">Стил</option>
+                    <option value="ЕЛЕГАНТ">ЕЛЕГАНТ</option>
+                </select>
+            </div>
+            <div id="texture-content">
+                
+            </div>            
+        </div>
+        <button id="menu-toggle"><i class="fa-solid fa-scroll"></i></button>
+    </div>
+    <script>
+        // WordPress integration configuration
+        const wpConfig = {
+            // Replace with your WordPress site URL
+            siteUrl: 'https://(server-domain)',
+            // API endpoint for configuration data
+            configEndpoint: '/wp-json/shirt-configurator/v1/public-config',
+            // Enable WordPress integration
+            enabled: true
+        };
+        // Make Three.js addons available globally
+        window.OrbitControls = THREE.OrbitControls;
+        window.GLTFLoader = THREE.GLTFLoader;
+        window.DRACOLoader = THREE.DRACOLoader;
+    </script>
+    <script>
+        // Wait for Three.js modules to load before loading the main script
+        function loadMainScript() {
+            const script = document.createElement('script');
+            script.src = 'js/script.js';
+            document.body.appendChild(script);
+        }
+        
+        if (window.threeJsLoaded) {
+            loadMainScript();
+        } else {
+            document.addEventListener('threeJsLoaded', loadMainScript);
+        }
+    </script>
+    <script src="js/script.js"></script>
+    <script src="js/touch.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" ></script>
+</body>
+</html>
