@@ -2,7 +2,7 @@
 
 A modern, interactive 3D shirt configurator built with Three.js and integrated with WooCommerce. This application allows customers to customize shirts with different models, textures, sizes, and button colors, then add them to their cart with real-time pricing.
 
-![3D Shirt Configurator](https://via.placeholder.com/800x400?text=3D+Shirt+Configurator+Demo)
+![3D Shirt Configurator](assets/3d-shirt-configurator.jpg)
 
 ## Features
 
